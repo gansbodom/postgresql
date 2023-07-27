@@ -5,9 +5,9 @@ def create_db(conn):
         cur.execute("""
         CREATE TABLE IF NOT EXISTS "clients" (
             "id" SERIAL PRIMARY KEY,
-            "name" VARCHAR(40) NOT NULL,
-            "surname" VARCHAR(80) NOT NULL,
-            "email" VARCHAR(80) NOT NULL
+            "first_name" VARCHAR(40) NOT NULL,
+            "last_name" VARCHAR(80) NOT NULL,
+            "email" VARCHAR(80) NOT NULL UNIQUE
             );
         """)
 
@@ -21,8 +21,8 @@ def create_db(conn):
         cur.execute("""
         CREATE TABLE IF NOT EXISTS "client_phone" (
             "client_id" INTEGER NOT NULL REFERENCES "clients" ("id"),
-            "number_id" INTEGER NOT NULL REFERENCES "phone" ("id"),
-            CONSTRAINT pk PRIMARY KEY ("client_id", "number_id")
+            "phone_id" INTEGER NOT NULL REFERENCES "phone" ("id"),
+            CONSTRAINT pk PRIMARY KEY ("client_id", "phone_id")
         ); 
         """)
         conn.commit()
