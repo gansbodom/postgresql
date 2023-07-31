@@ -1,22 +1,33 @@
 import psycopg2
 
-def add_client(conn, first_name, last_name, email, phones=None):
+# def select_phone_id(conn, phone):
+#     with conn.cursor() as cur:
+#         cur.execute("""
+#         SELECT id from public."phone" WHERE phone_number=%s
+#         """, [phone])
+#         phone_i = cur.fetchone()[0]
+#         print(type(phone_i))
+#         return
+
+def add_phone(conn, client_id, phone):
     with conn.cursor() as cur:
-        cur.execute ("""
-        INSERT INTO public."clients" (first_name, last_name, email) VALUES
-        (%s, %s, %s), ON CONFLICT (email) DO NOTHING;
-        """, (first_name, last_name, email))
-        cur.execute ("""
-        INSERT INTO public."phone" (phone_number) VALUES
-        (%s);
-        """, (phones))
         cur.execute("""
-        INSERT INTO public."client_phone" (client_id, number_id)
-        """)
-        #conn.commit()
-        #print(cur.fetchall())
+            INSERT INTO public."phone" (id, phone_number) VALUES
+            (%s) """, (phone))
+        conn.commit()
+
+        cur.execute("""
+        SELECT id from public."phone" WHERE phone_number=%s
+        """, [phone])
+        phone_id = cur.fetchone()[0]
+
+        cur.execute("""
+            INSERT INTO public."client_phone" (client_id, phone_id) VALUES
+            (%s, %s) """, (client_id, phone_id))
+        conn.commit()
+    pass
+
 
 
 with psycopg2.connect(database="netology_db", user="postgres", password="postgres") as conn:
-    add_client(conn, first_name='Сидор', last_name='Пидорович', email='zaebalsya@mail.ru', phones='123456789')
-    conn.close()
+    add_phone(conn, 1, 89122121282)
