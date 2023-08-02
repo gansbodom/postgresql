@@ -100,7 +100,6 @@ def delete_client(conn, client_id):
             SELECT phone_id from public."client_phone" WHERE client_id=%s
         """, (client_id,))
         phone_ids = cur.fetchall()
-        print(phone_ids)
         if phone_ids:
             for phone_id in phone_ids:
                 cur.execute("""
