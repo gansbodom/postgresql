@@ -57,11 +57,24 @@ def add_phone(conn, client_id, phone):
 
 def change_client(conn, client_id, first_name=None, last_name=None, email=None, phones=None):
     with conn.cursor() as cur:
-        cur.execute("""
-        UPDATE public."clients"
-            SET first_name=%s, last_name=%s
-            WHERE id = %s;
-        """, (first_name, last_name, client_id))
+        if first_name:
+            cur.execute("""
+            UPDATE public."clients"
+                SET first_name=%s
+                WHERE id = %s;
+            """, (first_name, client_id))
+        if last_name:
+            cur.execute("""
+            UPDATE public."clients"
+                SET last_name=%s
+                WHERE id = %s;
+            """, (last_name, client_id))
+        if email:
+            cur.execute("""
+            UPDATE public."clients"
+                SET first_name=%s
+                WHERE id = %s;
+            """, (email, client_id))
         conn.commit()
 
 def delete_phone(conn, client_id, phone):
@@ -83,6 +96,21 @@ def delete_phone(conn, client_id, phone):
 
 def delete_client(conn, client_id):
     with conn.cursor() as cur:
+        cur.execute("""
+            SELECT phone_id from public."client_phone" WHERE client_id=%s
+        """, (client_id,))
+        phone_ids = cur.fetchall()
+        print(phone_ids)
+        if phone_ids:
+            for phone_id in phone_ids:
+                cur.execute("""
+                    DELETE FROM public."client_phone" WHERE client_id=%s and phone_id=%s;
+                """,(client_id, phone_id))
+
+                cur.execute("""
+                    DELETE FROM public."phone" WHERE id=%s;
+                """, [phone_id])
+
         cur.execute("""
             DELETE FROM public."clients" WHERE id=%s;
         """, [client_id])
@@ -114,12 +142,13 @@ def find_client(conn, first_name=None, last_name=None, email=None, phone=None):
             print(cur.fetchall())
             return
 
-with psycopg2.connect(database="netology_db", user="postgres", password="postgres") as conn:
-    create_db(conn)# вызывайте функции здесь
-    add_client(conn, 'Ivan', 'Ivanov', 'test@mail.ru')
-    add_phone(conn, 1, "89122121282")
-    change_client(conn, 1, 'Petr', 'Petrov')
-    delete_phone(conn, 1, "89122121282")
-    delete_client(conn, 1)
-    find_client(conn, first_name='Ivan') #Можно вводить любое из значение (first_name, last_name, email, phone)
-conn.close()
+if __name__ == "__main__":
+    with psycopg2.connect(database="netology_db", user="postgres", password="postgres") as conn:
+        #create_db(conn)# вызывайте функции здесь
+        ##add_client(conn, 'Ivan', 'Ivanov', 'test@mail.ru')
+        ##add_phone(conn, 1, "89122121282")
+        #change_client(conn, 1, first_name='Petr')
+        ##delete_phone(conn, 1, "89122121282")
+        ##delete_client(conn, 1)
+        ##find_client(conn, email='test@mail.ru', phone=89122121282)
+    conn.close()
