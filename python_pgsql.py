@@ -143,11 +143,11 @@ def find_client(conn, first_name=None, last_name=None, email=None, phone=None):
 
 if __name__ == "__main__":
     with psycopg2.connect(database="netology_db", user="postgres", password="postgres") as conn:
-        #create_db(conn)# вызывайте функции здесь
-        ##add_client(conn, 'Ivan', 'Ivanov', 'test@mail.ru')
-        ##add_phone(conn, 1, "89122121282")
-        #change_client(conn, 1, first_name='Petr')
-        ##delete_phone(conn, 1, "89122121282")
-        ##delete_client(conn, 1)
-        ##find_client(conn, email='test@mail.ru', phone=89122121282)
+        create_db(conn)
+        add_client(conn, 'Ivan', 'Ivanov', 'test@mail.ru')
+        add_phone(conn, 1, "89122121282")
+        change_client(conn, 1, first_name='Petr')
+        delete_phone(conn, 1, "89122121282")
+        delete_client(conn, 1)
+        find_client(conn, email='test@mail.ru', phone=89122121282)
     conn.close()
